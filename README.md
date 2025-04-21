@@ -4,7 +4,9 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Video Demo
 Lab 1 - Phần 1:
+https://github.com/user-attachments/assets/0febbd50-696a-4a21-b984-b329a2bc2cab
 Lab 1 - Phần 2:
+https://github.com/user-attachments/assets/864d7c6a-19b5-42d8-af71-88ee7972295d
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
