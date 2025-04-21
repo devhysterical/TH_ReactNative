@@ -17,6 +17,7 @@ import P5Styling from './components/Lab1_210425/Phan1/P5Styling';
 import P6ScrollableContent from './components/Lab1_210425/Phan1/P6ScrollableContent';
 import P7BuildingAForm from './components/Lab1_210425/Phan1/P7BuildingAForm';
 import P8LongLists from './components/Lab1_210425/Phan1/P8LongLists';
+import Calculator from './components/Lab1_210425/Phan2/Calculator';
 
 const projects = [
   {key: 'P1', title: 'Project 1: Hello World'},
@@ -27,6 +28,7 @@ const projects = [
   {key: 'P6', title: 'Project 6: Scrollable Content'},
   {key: 'P7', title: 'Project 7: Building a Form'},
   {key: 'P8', title: 'Project 8: Long Lists'},
+  {key: 'Cal', title: 'Calculator'},
 ];
 
 const menuBackgroundImage = require('./assets/bg.png');
@@ -75,6 +77,8 @@ const App = () => {
         return <P7BuildingAForm />;
       case 'P8':
         return <P8LongLists />;
+      case 'Cal':
+        return <Calculator />;
       default:
         return null; // Không render gì nếu không có project nào được chọn
     }
