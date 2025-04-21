@@ -3,10 +3,16 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 # Getting Started
 
 # Video Demo
-Lab 1 - Phần 1:
-https://github.com/user-attachments/assets/0febbd50-696a-4a21-b984-b329a2bc2cab
-Lab 1 - Phần 2:
-https://github.com/user-attachments/assets/864d7c6a-19b5-42d8-af71-88ee7972295d
+
+**Lab 1 - Phần 1:**
+
+[![Xem Demo Lab 1 - Phần 1]](https://github.com/user-attachments/assets/0febbd50-696a-4a21-b984-b329a2bc2cab)
+
+**Lab 1 - Phần 2:**
+
+[![Xem Demo Lab 1 - Phần 2]](https://github.com/user-attachments/assets/864d7c6a-19b5-42d8-af71-88ee7972295d)
+
+_(Lưu ý: Thay thế `URL_ANH_THUMBNAIL_PHAN_1` và `URL_ANH_THUMBNAIL_PHAN_2` bằng đường dẫn URL đến ảnh chụp màn hình xem trước của video tương ứng. Bạn có thể tải ảnh này lên cùng thư mục dự án hoặc một nơi lưu trữ ảnh khác.)_
 
 > **Note**: Make sure you have completed the [Set Up Your Environment](https://reactnative.dev/docs/set-up-your-environment) guide before proceeding.
 
