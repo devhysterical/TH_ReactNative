@@ -1,192 +1,104 @@
-import React, {useState} from 'react';
-import {
-  StyleSheet,
-  SafeAreaView,
-  Alert,
-  View,
-  Text,
-  Button,
-  ImageBackground,
-  Platform,
-} from 'react-native';
-import P1HelloWorld from './components/Lab1_210425/Phan1/P1HelloWorld';
-import P2CapturingTaps from './components/Lab1_210425/Phan1/P2CapturingTaps';
-import P3CustomComponent from './components/Lab1_210425/Phan1/P3CustomComponent';
-import P4StateProps from './components/Lab1_210425/Phan1/P4StateProps';
-import P5Styling from './components/Lab1_210425/Phan1/P5Styling';
-import P6ScrollableContent from './components/Lab1_210425/Phan1/P6ScrollableContent';
-import P7BuildingAForm from './components/Lab1_210425/Phan1/P7BuildingAForm';
-import P8LongLists from './components/Lab1_210425/Phan1/P8LongLists';
-import Calculator from './components/Lab1_210425/Phan2/Calculator';
+import 'react-native-gesture-handler';
+import React from 'react';
+import {NavigationContainer} from '@react-navigation/native';
+import {createStackNavigator} from '@react-navigation/stack';
+import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import Icon from 'react-native-vector-icons/FontAwesome6';
 
-const projects = [
-  {key: 'P1', title: 'Project 1: Hello World'},
-  {key: 'P2', title: 'Project 2: Capturing Taps'},
-  {key: 'P3', title: 'Project 3: Custom Component'},
-  {key: 'P4', title: 'Project 4: State & Props'},
-  {key: 'P5', title: 'Project 5: Styling'},
-  {key: 'P6', title: 'Project 6: Scrollable Content'},
-  {key: 'P7', title: 'Project 7: Building a Form'},
-  {key: 'P8', title: 'Project 8: Long Lists'},
-  {key: 'Cal', title: 'Calculator'},
-];
+import ContactsScreen from './src/screens/ContactsScreen';
+import ProfileScreen from './src/screens/ProfileScreen';
+import FavoritesScreen from './src/screens/FavoritesScreen';
+import NearbyScreen from './src/screens/NearbyScreen';
+import {FavoritesProvider} from './src/context/FavoritesContext';
 
-const menuBackgroundImage = require('./assets/bg.png');
+const Stack = createStackNavigator();
+const Tab = createBottomTabNavigator();
 
-const App = () => {
-  // State để lưu trữ project đang được chọn
-  const [selectedProject, setSelectedProject] = useState(null);
-
-  // Hàm xử lý cho P3CustomComponent
-  const handleFirstButtonPress = () => {
-    Alert.alert('First Button Pressed!');
-  };
-
-  const handleSecondButtonPress = () => {
-    Alert.alert('Second Button (Red) Pressed!');
-  };
-
-  // Hàm render nội dung project (không bao gồm menu)
-  const renderProjectContent = () => {
-    switch (selectedProject) {
-      case 'P1':
-        return <P1HelloWorld />;
-      case 'P2':
-        return <P2CapturingTaps />;
-      case 'P3':
-        return (
-          <View style={styles.buttonContainer}>
-            <P3CustomComponent
-              text="Press Me (Default)"
-              _onPress={handleFirstButtonPress}
-            />
-            <P3CustomComponent
-              text="Press Me (Custom Style)"
-              _onPress={handleSecondButtonPress}
-              buttonStyle={styles.customButtonStyle}
-            />
-          </View>
-        );
-      case 'P4':
-        return <P4StateProps />;
-      case 'P5':
-        return <P5Styling />;
-      case 'P6':
-        return <P6ScrollableContent />;
-      case 'P7':
-        return <P7BuildingAForm />;
-      case 'P8':
-        return <P8LongLists />;
-      case 'Cal':
-        return <Calculator />;
-      default:
-        return null; // Không render gì nếu không có project nào được chọn
-    }
-  };
-
-  // Render Menu Component với Background
-  const renderMenu = () => (
-    <ImageBackground
-      source={menuBackgroundImage}
-      style={styles.backgroundImage}>
-      <View style={styles.menuOverlay}>
-        {/* Lớp phủ tùy chọn để làm tối/mờ ảnh nền */}
-        <View style={styles.menuContainer}>
-          <Text style={styles.menuTitle}>Select a Project:</Text>
-          {projects.map(project => (
-            <View key={project.key} style={styles.menuButton}>
-              <Button
-                title={project.title}
-                onPress={() => setSelectedProject(project.key)}
-              />
-            </View>
-          ))}
-        </View>
-      </View>
-    </ImageBackground>
-  );
-
+const ContactsStack = () => {
   return (
-    <SafeAreaView style={styles.safeArea}>
-      {selectedProject ? (
-        <>
-          <View style={styles.backButtonContainer}>
-            <Button
-              title="Back to Menu"
-              onPress={() => setSelectedProject(null)}
-            />
-          </View>
-          <View style={styles.projectContentContainer}>
-            {renderProjectContent()}
-          </View>
-        </>
-      ) : (
-        // Hiển thị menu với background
-        renderMenu()
-      )}
-    </SafeAreaView>
+    <Stack.Navigator>
+      <Stack.Screen
+        name="ContactsList"
+        component={ContactsScreen}
+        options={{title: 'Contacts'}}
+      />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+    </Stack.Navigator>
   );
 };
 
-const styles = StyleSheet.create({
-  safeArea: {
-    flex: 1,
-    backgroundColor: '#fff',
-  },
-  backgroundImage: {
-    flex: 1,
-    resizeMode: 'cover',
-  },
-  menuOverlay: {
-    flex: 1,
-    backgroundColor: 'rgba(0, 0, 0, 0.3)',
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  menuContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    padding: 30,
-    backgroundColor: 'rgba(255, 255, 255, 0.85)',
-    borderRadius: 10,
-    width: '90%',
-    maxWidth: 400,
-  },
-  menuTitle: {
-    fontSize: 22,
-    fontWeight: 'bold',
-    marginBottom: 25,
-    color: '#333',
-    textAlign: 'center',
-  },
-  menuButton: {
-    marginVertical: 9,
-    width: '100%',
-  },
-  backButtonContainer: {
-    position: 'absolute',
-    top: Platform.OS === 'android' ? 15 : 55,
-    left: 15,
-    zIndex: 1,
-    backgroundColor: 'rgba(255, 255, 255, 0.9)',
-    borderRadius: 5,
-    paddingHorizontal: 5,
-  },
-  projectContentContainer: {
-    flex: 1,
-    marginTop: Platform.OS === 'android' ? 60 : 100,
-  },
-  buttonContainer: {
-    flex: 1,
-    width: '80%',
-    justifyContent: 'center',
-    alignSelf: 'center',
-  },
-  customButtonStyle: {
-    backgroundColor: '#dc3545',
-    borderColor: '#bd2130',
-    borderWidth: 1,
-  },
-});
+const FavoritesStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="FavoritesList"
+        component={FavoritesScreen}
+        options={{title: 'Favorites'}}
+      />
+      <Stack.Screen name="Profile" component={ProfileScreen} />
+    </Stack.Navigator>
+  );
+};
+
+const NearbyStack = () => {
+  return (
+    <Stack.Navigator>
+      <Stack.Screen
+        name="Nearby"
+        component={NearbyScreen}
+        options={{title: 'Nearby'}}
+      />
+    </Stack.Navigator>
+  );
+};
+
+const App = () => {
+  return (
+    <FavoritesProvider>
+      <NavigationContainer>
+        <Tab.Navigator
+          screenOptions={({route}) => ({
+            tabBarActiveTintColor: 'blue',
+            tabBarInactiveTintColor: 'gray',
+          })}>
+          <Tab.Screen
+            name="ContactsTab"
+            component={ContactsStack}
+            options={{
+              title: 'Contacts',
+              headerShown: false,
+              tabBarIcon: ({color, size}) => (
+                <Icon name="address-book" size={size} color={color} solid />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="FavoritesTab"
+            component={FavoritesStack}
+            options={{
+              title: 'Favorites',
+              headerShown: false,
+              tabBarIcon: ({color, size}) => (
+                <Icon name="star" size={size} color={color} solid />
+              ),
+            }}
+          />
+          <Tab.Screen
+            name="NearbyTab"
+            component={NearbyStack}
+            options={{
+              title: 'Nearby',
+              headerShown: false,
+              tabBarIcon: ({color, size}) => (
+                <Icon name="location-dot" size={size} color={color} solid />
+              ),
+            }}
+          />
+        </Tab.Navigator>
+      </NavigationContainer>
+    </FavoritesProvider>
+  );
+};
 
 export default App;
+
