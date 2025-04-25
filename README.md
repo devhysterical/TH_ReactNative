@@ -5,6 +5,7 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 # Video Demo
 
 **Lab 2**
+
 [![Xem Demo Lab 2]](https://github.com/user-attachments/assets/5f60a059-d1d5-48eb-9728-2953d7a460c6)
 
 **Lab 1 - Phần 1:**
