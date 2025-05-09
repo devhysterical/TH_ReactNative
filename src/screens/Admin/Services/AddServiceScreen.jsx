@@ -48,15 +48,16 @@ const AddServiceScreen = ({navigation}) => {
   return (
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
-        <Text style={styles.header}>Add New Service</Text>
+        <Text style={styles.header}>Thêm dịch vụ mới</Text>
         <TextInput
-          placeholder="Tên dịch vụ (ví dụ: Cắt tóc)"
+          placeholder="Tên dịch vụ (ví dụ: Chăm sóc da)"
           value={name}
           onChangeText={setName}
           style={styles.input}
         />
+        <Text style={styles.label}>Giá (VND):</Text>
         <TextInput
-          placeholder="Giá (ví dụ: 25.99)"
+          placeholder="Giá (ví dụ: 50000)"
           value={price}
           onChangeText={setPrice}
           style={styles.input}
@@ -111,10 +112,16 @@ const styles = StyleSheet.create({
   },
   textArea: {
     height: 100,
-    textAlignVertical: 'top', // For Android
+    textAlignVertical: 'top',
   },
   loader: {
     marginTop: 20,
+  },
+  label: {
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 5,
+    fontWeight: '500',
   },
 });
 

@@ -21,6 +21,7 @@ const ServiceDetailScreen = ({route, navigation}) => {
   const [service, setService] = useState(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
+  const [displayPrice, setDisplayPrice] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
@@ -34,6 +35,11 @@ const ServiceDetailScreen = ({route, navigation}) => {
         setService(fetchedService);
         setName(fetchedService.name);
         setPrice(String(fetchedService.price));
+        setDisplayPrice(
+          fetchedService.price
+            ? `${Number(fetchedService.price).toLocaleString('vi-VN')} VND`
+            : '',
+        );
         setDescription(fetchedService.description || '');
       } else {
         Alert.alert('Lỗi', 'Dịch vụ không được tìm thấy.');
@@ -52,6 +58,16 @@ const ServiceDetailScreen = ({route, navigation}) => {
       fetchServiceDetails();
     }, [fetchServiceDetails]),
   );
+
+  const handlePriceChange = text => {
+    const numericValue = text.replace(/[^0-9]/g, '');
+    setPrice(numericValue);
+    if (numericValue) {
+      setDisplayPrice(`${Number(numericValue).toLocaleString('vi-VN')} VND`);
+    } else {
+      setDisplayPrice('');
+    }
+  };
 
   const handleUpdateService = async () => {
     if (!name.trim() || !price.trim()) {
@@ -133,10 +149,11 @@ const ServiceDetailScreen = ({route, navigation}) => {
           onChangeText={setName}
           style={styles.input}
         />
+        <Text style={styles.label}>Giá (VND):</Text>
         <TextInput
-          placeholder="Giá"
+          placeholder="Giá (ví dụ: 50000)"
           value={price}
-          onChangeText={setPrice}
+          onChangeText={handlePriceChange}
           style={styles.input}
           keyboardType="numeric"
         />
@@ -216,6 +233,13 @@ const styles = StyleSheet.create({
   },
   deleteButtonContainer: {
     marginTop: 20,
+  },
+  label: {
+    // Thêm style cho label nếu cần
+    fontSize: 16,
+    color: '#555',
+    marginBottom: 5,
+    fontWeight: '500',
   },
 });
 

@@ -48,7 +48,7 @@ const CustomersListScreen = ({navigation}) => {
         <Text style={styles.itemEmail}>{item.email}</Text>
       </View>
       <Button
-        title="View/Update"
+        title="Chi tiết/Cập nhật"
         onPress={() =>
           navigation.navigate('CustomerDetail', {
             customerId: item.id,

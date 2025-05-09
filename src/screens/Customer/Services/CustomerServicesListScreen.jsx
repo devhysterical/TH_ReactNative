@@ -69,7 +69,9 @@ const CustomerServicesListScreen = ({navigation}) => {
       <View style={styles.itemTextContainer}>
         <Text style={styles.itemName}>{item.name}</Text>
         <Text style={styles.itemPrice}>
-          ${item.price ? item.price.toFixed(2) : 'N/A'}
+          {item.price
+            ? `${Number(item.price).toLocaleString('vi-VN')} VND`
+            : 'N/A'}
         </Text>
         {item.description && (
           <Text style={styles.itemDescription} numberOfLines={1}>

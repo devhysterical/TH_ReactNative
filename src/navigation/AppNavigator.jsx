@@ -12,15 +12,11 @@ import ForgotPasswordScreen from '../screens/Auth/ForgotPasswordScreen';
 import CustomerDrawerNavigator from '../screens/Customer/navigators/CustomerDrawerNavigator';
 
 // Admin Screens
-import AdminDashboard from '../screens/Admin/AdminDashboard';
-import ServicesListScreen from '../screens/Admin/Services/ServicesListScreen';
+import AdminTabNavigator from '../screens/Admin/navigators/AdminTabNavigator';
 import AddServiceScreen from '../screens/Admin/Services/AddServiceScreen';
 import ServiceDetailScreen from '../screens/Admin/Services/ServiceDetailScreen';
-import TransactionsListScreen from '../screens/Admin/Transactions/TransactionsListScreen';
 import TransactionDetailScreen from '../screens/Admin/Transactions/TransactionDetailScreen';
-import CustomersListScreen from '../screens/Admin/Customers/CustomersListScreen';
 import CustomerDetailScreen from '../screens/Admin/Customers/CustomerDetailScreen';
-import AdminProfileScreen from '../screens/Admin/Profile/AdminProfileScreen';
 import AdminChangePasswordScreen from '../screens/Admin/Profile/AdminChangePasswordScreen';
 
 const Stack = createNativeStackNavigator();
@@ -77,14 +73,9 @@ const AppNavigator = () => {
 const AdminScreensNavigator = () => (
   <Stack.Navigator>
     <Stack.Screen
-      name="AdminDashboard"
-      component={AdminDashboard}
-      options={{headerShown: true, title: 'Admin Dashboard'}}
-    />
-    <Stack.Screen
-      name="ServicesList"
-      component={ServicesListScreen}
-      options={{headerShown: true, title: 'Quản lý dịch vụ'}}
+      name="AdminMainTabs"
+      component={AdminTabNavigator}
+      options={{headerShown: false}}
     />
     <Stack.Screen
       name="AddService"
@@ -97,29 +88,14 @@ const AdminScreensNavigator = () => (
       options={{headerShown: true, title: 'Chi tiết dịch vụ'}}
     />
     <Stack.Screen
-      name="TransactionsList"
-      component={TransactionsListScreen}
-      options={{headerShown: true, title: 'Quản lý giao dịch'}}
-    />
-    <Stack.Screen
       name="TransactionDetail"
       component={TransactionDetailScreen}
       options={{headerShown: true, title: 'Chi tiết giao dịch'}}
     />
     <Stack.Screen
-      name="CustomersList"
-      component={CustomersListScreen}
-      options={{headerShown: true, title: 'Quản lý khách hàng'}}
-    />
-    <Stack.Screen
       name="CustomerDetail"
       component={CustomerDetailScreen}
       options={{headerShown: true, title: 'Chi tiết khách hàng'}}
-    />
-    <Stack.Screen
-      name="AdminProfile"
-      component={AdminProfileScreen}
-      options={{headerShown: true, title: 'Trang cá nhân'}}
     />
     <Stack.Screen
       name="AdminChangePassword"

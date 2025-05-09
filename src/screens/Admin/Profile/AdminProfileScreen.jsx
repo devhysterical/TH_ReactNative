@@ -1,49 +1,86 @@
-// filepath: src/screens/Admin/Profile/AdminProfileScreen.jsx
 import React from 'react';
-import {View, Text, Button, StyleSheet, TextInput, Alert} from 'react-native';
+import {View, Text, Button, StyleSheet, Alert} from 'react-native';
 import {useAuth} from '../../../context/AuthContext';
 
 const AdminProfileScreen = ({navigation}) => {
-  const {user, updateProfile} = useAuth();
+  const {user, logout} = useAuth();
 
-  const handleUpdate = async () => {
-    Alert.alert('Đã cập nhật thông tin cá nhân thành công!');
+  const handleLogout = () => {
+    Alert.alert(
+      'Xác nhận đăng xuất',
+      'Bạn có chắc chắn muốn đăng xuất không?',
+      [
+        {text: 'Hủy', style: 'cancel'},
+        {text: 'Đăng xuất', onPress: () => logout(), style: 'destructive'},
+      ],
+    );
   };
 
   return (
     <View style={styles.container}>
-      <Text style={styles.header}>My Profile</Text>
-      <TextInput placeholder="Họ tên" style={styles.input} />
-      <TextInput
-        placeholder="Email"
-        style={styles.input}
-        value={user?.email}
-        editable={false}
-      />
-      <Button title="Cập nhật thông tin cá nhân" onPress={handleUpdate} />
-      <View style={styles.buttonSpacer} />
-      <Button
-        title="Đổi mật khẩu"
-        onPress={() => navigation.navigate('AdminChangePassword')}
-      />
+      <Text style={styles.title}>Thông tin cá nhân</Text>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Họ tên:</Text>
+        <Text style={styles.value}>{user?.fullName || 'N/A'}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Email:</Text>
+        <Text style={styles.value}>{user?.email || 'N/A'}</Text>
+      </View>
+      <View style={styles.infoContainer}>
+        <Text style={styles.label}>Vai trò:</Text>
+        <Text style={styles.value}>
+          {user?.role === 'admin' ? 'Quản trị viên' : 'N/A'}
+        </Text>
+      </View>
+
+      <View style={styles.buttonWrapper}>
+        <Button
+          title="Đổi mật khẩu"
+          onPress={() => navigation.navigate('AdminChangePassword')}
+        />
+      </View>
+      <View style={styles.buttonWrapper}>
+        <Button title="Đăng xuất" onPress={handleLogout} color="#c0392b" />
+      </View>
     </View>
   );
 };
+
 const styles = StyleSheet.create({
-  container: {flex: 1, padding: 20},
-  header: {
-    fontSize: 22,
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor: '#f5f5f5',
+  },
+  title: {
+    fontSize: 24,
     fontWeight: 'bold',
     marginBottom: 20,
     textAlign: 'center',
   },
-  input: {
-    borderWidth: 1,
-    borderColor: '#ddd',
-    padding: 10,
+  infoContainer: {
+    flexDirection: 'row',
     marginBottom: 15,
-    borderRadius: 5,
+    paddingVertical: 10,
+    paddingHorizontal: 15,
+    backgroundColor: '#fff',
+    borderRadius: 8,
+    elevation: 1,
   },
-  buttonSpacer: {marginVertical: 10},
+  label: {
+    fontSize: 16,
+    fontWeight: 'bold',
+    color: '#333',
+    marginRight: 10,
+  },
+  value: {
+    fontSize: 16,
+    color: '#555',
+  },
+  buttonWrapper: {
+    marginTop: 20,
+  },
 });
+
 export default AdminProfileScreen;

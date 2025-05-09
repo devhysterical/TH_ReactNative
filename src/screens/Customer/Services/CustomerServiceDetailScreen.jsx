@@ -66,7 +66,9 @@ const CustomerServiceDetailScreen = ({route, navigation}) => {
       <View style={styles.detailItem}>
         <Text style={styles.label}>Giá:</Text>
         <Text style={styles.value}>
-          ${serviceDetails.price ? serviceDetails.price.toFixed(2) : 'N/A'}
+          {serviceDetails.price
+            ? `${Number(serviceDetails.price).toLocaleString('vi-VN')} VND`
+            : 'N/A'}
         </Text>
       </View>
       {serviceDetails.duration && (

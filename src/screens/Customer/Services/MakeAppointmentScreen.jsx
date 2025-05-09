@@ -97,7 +97,10 @@ const MakeAppointmentScreen = ({route, navigation}) => {
       <Text style={styles.title}>Đặt lịch hẹn</Text>
       <Text style={styles.serviceName}>Dịch vụ: {serviceName}</Text>
       <Text style={styles.serviceName}>
-        Giá: ${servicePrice ? servicePrice.toFixed(2) : 'N/A'}
+        Giá:{' '}
+        {servicePrice
+          ? `${Number(servicePrice).toLocaleString('vi-VN')} VND`
+          : 'N/A'}
       </Text>
 
       <TouchableOpacity
