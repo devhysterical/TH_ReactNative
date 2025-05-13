@@ -4,6 +4,10 @@ This is a new [**React Native**](https://reactnative.dev) project, bootstrapped 
 
 # Video Demo
 
+**THỰC HÀNH BUỔI 5 NGÀY 13/05/2025**
+
+[![XEM THỰC HÀNH BUỔI 5]](https://github.com/user-attachments/assets/1904ecb4-869f-4792-8c9d-588a521f15ba)
+
 **THỰC HÀNH LAB 4 NGÀY 09/05/2025**
 
 [![XEM THỰC HÀNH LAB 4]](https://github.com/user-attachments/assets/0e30c8c7-42ae-4dae-b43b-5462204aa4c1)
