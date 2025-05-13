@@ -234,3 +234,77 @@ export const deleteAppointment = async appointmentId => {
     throw error;
   }
 };
+
+// --- Review Management ---
+export const addReview = async reviewData => {
+  try {
+    const reviewWithTimestamp = {
+      ...reviewData,
+      createdAt: firestore.FieldValue.serverTimestamp(), // Sử dụng cú pháp của @react-native-firebase
+    };
+    const docRef = await firestore()
+      .collection('reviews')
+      .add(reviewWithTimestamp);
+    return docRef.id;
+  } catch (error) {
+    console.error('Error adding review: ', error);
+    throw error;
+  }
+};
+
+export const getReviewsByServiceId = async serviceId => {
+  try {
+    const snapshot = await firestore()
+      .collection('reviews')
+      .where('serviceId', '==', serviceId)
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    if (snapshot.empty) {
+      return [];
+    }
+    const reviews = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    return reviews;
+  } catch (error) {
+    console.error('Error fetching reviews by serviceId: ', error);
+    throw error;
+  }
+};
+
+export const getUserReviewForService = async (userId, serviceId) => {
+  try {
+    const snapshot = await firestore()
+      .collection('reviews')
+      .where('userId', '==', userId)
+      .where('serviceId', '==', serviceId)
+      .limit(1)
+      .get();
+
+    if (!snapshot.empty) {
+      const doc = snapshot.docs[0];
+      return {id: doc.id, ...doc.data()};
+    }
+    return null;
+  } catch (error) {
+    console.error('Error fetching user review for service: ', error);
+    throw error;
+  }
+};
+
+export const getAllReviews = async () => {
+  try {
+    const snapshot = await firestore()
+      .collection('reviews')
+      .orderBy('createdAt', 'desc')
+      .get();
+
+    if (snapshot.empty) {
+      return [];
+    }
+    const reviews = snapshot.docs.map(doc => ({id: doc.id, ...doc.data()}));
+    return reviews;
+  } catch (error) {
+    console.error('Error fetching all reviews: ', error);
+    throw error;
+  }
+};

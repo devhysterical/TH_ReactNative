@@ -48,8 +48,7 @@ const AdminsListScreen = ({navigation}) => {
       style={styles.itemContainer}
       onPress={() =>
         navigation.navigate('CustomerDetail', {customerId: item.id})
-      }
-    >
+      }>
       <View style={styles.itemInfo}>
         <Text style={styles.itemName}>{item.fullName || 'N/A'}</Text>
         <Text style={styles.itemEmail}>{item.email}</Text>

@@ -1,8 +1,9 @@
 import React from 'react';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
-import Icon from 'react-native-vector-icons/Ionicons';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 
+// Import Screens
 import ServicesListScreen from '../Services/ServicesListScreen';
 import TransactionsListScreen from '../Transactions/TransactionsListScreen';
 import CustomersListScreen from '../Customers/CustomersListScreen';
@@ -14,6 +15,7 @@ import ServiceDetailScreen from '../Services/ServiceDetailScreen';
 import CustomerDetailScreen from '../Customers/CustomerDetailScreen';
 import TransactionDetailScreen from '../Transactions/TransactionDetailScreen';
 import AdminChangePasswordScreen from '../Profile/AdminChangePasswordScreen';
+import AdminReviewsListScreen from '../Reviews/AdminReviewsListScreen'; // Import the new screen
 
 const Tab = createBottomTabNavigator();
 const AdminStack = createNativeStackNavigator();
@@ -28,10 +30,13 @@ const renderTabBarIcon = (route, focused, color, size) => {
     iconName = focused ? 'people' : 'people-outline';
   } else if (route.name === 'AdminsTab') {
     iconName = focused ? 'shield-checkmark' : 'shield-checkmark-outline';
+  } else if (route.name === 'ReviewsTab') {
+    // Icon for ReviewsTab
+    iconName = focused ? 'chatbox-ellipses' : 'chatbox-ellipses-outline';
   } else if (route.name === 'ProfileTab') {
     iconName = focused ? 'person-circle' : 'person-circle-outline';
   }
-  return <Icon name={iconName} size={size} color={color} />;
+  return <Ionicons name={iconName} size={size} color={color} />;
 };
 
 function AdminStackNavigator() {
@@ -115,6 +120,11 @@ const AdminTabNavigator = () => {
         name="TransactionsTab"
         component={TransactionsListScreen}
         options={{title: 'Giao Dịch'}}
+      />
+      <Tab.Screen
+        name="ReviewsTab"
+        component={AdminReviewsListScreen}
+        options={{title: 'Đánh Giá'}}
       />
       <Tab.Screen
         name="CustomersTab"

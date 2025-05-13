@@ -40,6 +40,7 @@ const ServicesListScreen = ({navigation}) => {
   const onRefresh = useCallback(() => {
     setRefreshing(true);
     fetchServices();
+    setRefreshing(false);
   }, []);
 
   const renderItem = ({item}) => (

@@ -8,6 +8,8 @@ import {
   Alert,
   ScrollView,
   ActivityIndicator,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import {
   getServiceById,
@@ -15,37 +17,43 @@ import {
   deleteService,
 } from '../../../services/firestore';
 import {useFocusEffect} from '@react-navigation/native';
+import {launchImageLibrary} from 'react-native-image-picker';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const ServiceDetailScreen = ({route, navigation}) => {
   const {serviceId} = route.params;
   const [service, setService] = useState(null);
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
-  const [displayPrice, setDisplayPrice] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(true);
   const [updating, setUpdating] = useState(false);
   const [deleting, setDeleting] = useState(false);
 
+  const [initialImageBase64, setInitialImageBase64] = useState(null);
+  const [newImageUri, setNewImageUri] = useState(null);
+  const [newImageBase64, setNewImageBase64] = useState(null);
+  const [clearCurrentImage, setClearCurrentImage] = useState(false);
+
   const fetchServiceDetails = useCallback(async () => {
     setLoading(true);
+    setNewImageUri(null);
+    setNewImageBase64(null);
+    setClearCurrentImage(false);
     try {
       const fetchedService = await getServiceById(serviceId);
       if (fetchedService) {
         setService(fetchedService);
         setName(fetchedService.name);
         setPrice(String(fetchedService.price));
-        setDisplayPrice(
-          fetchedService.price
-            ? `${Number(fetchedService.price).toLocaleString('vi-VN')} VND`
-            : '',
-        );
         setDescription(fetchedService.description || '');
+        setInitialImageBase64(fetchedService.imageBase64 || null);
       } else {
         Alert.alert('Lỗi', 'Dịch vụ không được tìm thấy.');
         navigation.goBack();
       }
     } catch (error) {
+      console.error('Lỗi fetchServiceDetails: ', error);
       Alert.alert('Lỗi', 'Không thể lấy thông tin dịch vụ.');
       navigation.goBack();
     } finally {
@@ -59,14 +67,57 @@ const ServiceDetailScreen = ({route, navigation}) => {
     }, [fetchServiceDetails]),
   );
 
+  const handleChoosePhoto = () => {
+    launchImageLibrary(
+      {
+        mediaType: 'photo',
+        includeBase64: true,
+        quality: 0.7,
+        maxWidth: 800,
+        maxHeight: 800,
+      },
+      response => {
+        if (response.didCancel) {
+          console.log('User cancelled image picker');
+        } else if (response.errorCode) {
+          console.log('ImagePicker Error: ', response.errorMessage);
+          Alert.alert('Lỗi', 'Không thể chọn ảnh: ' + response.errorMessage);
+        } else if (response.assets && response.assets.length > 0) {
+          const asset = response.assets[0];
+          if (asset.base64) {
+            const base64StringSizeInBytes =
+              asset.base64.length * (3 / 4) -
+              (asset.base64.endsWith('==')
+                ? 2
+                : asset.base64.endsWith('=')
+                ? 1
+                : 0);
+            const sizeLimitBytes = 700 * 1024;
+            if (base64StringSizeInBytes > sizeLimitBytes) {
+              Alert.alert(
+                'Lỗi kích thước',
+                `Ảnh quá lớn (khoảng ${Math.round(
+                  base64StringSizeInBytes / 1024,
+                )}KB). Vui lòng chọn ảnh nhỏ hơn ${Math.round(
+                  sizeLimitBytes / 1024,
+                )}KB.`,
+              );
+              return;
+            }
+            setNewImageUri(asset.uri);
+            setNewImageBase64(asset.base64);
+            setClearCurrentImage(false);
+          } else {
+            Alert.alert('Lỗi', 'Không thể lấy dữ liệu Base64 từ ảnh.');
+          }
+        }
+      },
+    );
+  };
+
   const handlePriceChange = text => {
     const numericValue = text.replace(/[^0-9]/g, '');
     setPrice(numericValue);
-    if (numericValue) {
-      setDisplayPrice(`${Number(numericValue).toLocaleString('vi-VN')} VND`);
-    } else {
-      setDisplayPrice('');
-    }
   };
 
   const handleUpdateService = async () => {
@@ -82,15 +133,30 @@ const ServiceDetailScreen = ({route, navigation}) => {
 
     setUpdating(true);
     try {
-      await updateService(serviceId, {
+      const dataToUpdate = {
         name: name.trim(),
         price: priceValue,
         description: description.trim(),
-      });
+      };
+
+      if (newImageBase64) {
+        dataToUpdate.imageBase64 = newImageBase64;
+      } else if (clearCurrentImage) {
+        dataToUpdate.imageBase64 = null;
+      }
+
+      console.log('Dữ liệu gửi đi để cập nhật:', dataToUpdate);
+
+      await updateService(serviceId, dataToUpdate);
+
       Alert.alert('Thành công', 'Dịch vụ đã được cập nhật thành công!');
-      navigation.goBack();
+      fetchServiceDetails();
     } catch (error) {
-      Alert.alert('Lỗi', 'Không thể cập nhật dịch vụ.');
+      console.error('LỖI CỤ THỂ KHI CẬP NHẬT DỊCH VỤ (Màn hình):', error);
+      Alert.alert(
+        'Lỗi cập nhật',
+        `Không thể cập nhật dịch vụ. ${error.message || 'Vui lòng thử lại.'}`,
+      );
     } finally {
       setUpdating(false);
     }
@@ -111,6 +177,7 @@ const ServiceDetailScreen = ({route, navigation}) => {
               Alert.alert('Thành công', 'Dịch vụ đã được xoá thành công!');
               navigation.goBack();
             } catch (error) {
+              console.error('Lỗi xóa dịch vụ: ', error);
               Alert.alert('Lỗi', 'Không thể xoá dịch vụ.');
             } finally {
               setDeleting(false);
@@ -143,6 +210,50 @@ const ServiceDetailScreen = ({route, navigation}) => {
     <ScrollView contentContainerStyle={styles.scrollContainer}>
       <View style={styles.container}>
         <Text style={styles.header}>Thông tin dịch vụ</Text>
+
+        {newImageUri ? (
+          <Image source={{uri: newImageUri}} style={styles.previewImage} />
+        ) : initialImageBase64 ? (
+          <Image
+            source={{uri: `data:image/jpeg;base64,${initialImageBase64}`}}
+            style={styles.previewImage}
+          />
+        ) : (
+          <View style={styles.noImageContainer}>
+            <Icon name="image-off-outline" size={50} color="#ccc" />
+            <Text style={styles.noImageText}>Chưa có ảnh</Text>
+          </View>
+        )}
+
+        <TouchableOpacity
+          style={styles.imagePickerButton}
+          onPress={handleChoosePhoto}>
+          <Icon name="camera-outline" size={22} color="#007bff" />
+          <Text style={styles.imagePickerText}>
+            {newImageUri || initialImageBase64 ? 'Thay đổi ảnh' : 'Chọn ảnh'}
+          </Text>
+        </TouchableOpacity>
+
+        {(newImageUri || initialImageBase64) && !clearCurrentImage && (
+          <TouchableOpacity
+            style={[styles.imagePickerButton, {backgroundColor: '#ffdddd'}]}
+            onPress={() => {
+              setNewImageUri(null);
+              setNewImageBase64(null);
+              setClearCurrentImage(true);
+            }}>
+            <Icon name="trash-outline" size={22} color="#dc3545" />
+            <Text style={[styles.imagePickerText, {color: '#dc3545'}]}>
+              Xóa ảnh hiện tại
+            </Text>
+          </TouchableOpacity>
+        )}
+        {clearCurrentImage && (
+          <Text style={{textAlign: 'center', color: 'red', marginBottom: 10}}>
+            Ảnh sẽ bị xóa khi cập nhật.
+          </Text>
+        )}
+
         <TextInput
           placeholder="Tên dịch vụ"
           value={name}
@@ -235,11 +346,46 @@ const styles = StyleSheet.create({
     marginTop: 20,
   },
   label: {
-    // Thêm style cho label nếu cần
     fontSize: 16,
-    color: '#555',
+    color: '#495057',
     marginBottom: 5,
     fontWeight: '500',
+  },
+  imagePickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e9ecef',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+    justifyContent: 'center',
+  },
+  imagePickerText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#007bff',
+  },
+  previewImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+    marginBottom: 10,
+    resizeMode: 'cover',
+    alignSelf: 'center',
+  },
+  noImageContainer: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+    marginBottom: 10,
+    backgroundColor: '#f0f0f0',
+    justifyContent: 'center',
+    alignItems: 'center',
+  },
+  noImageText: {
+    marginTop: 10,
+    color: '#aaa',
+    fontSize: 16,
   },
 });
 

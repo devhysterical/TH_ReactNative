@@ -8,14 +8,35 @@ import {
   Alert,
   ScrollView,
   ActivityIndicator,
+  Image,
+  TouchableOpacity,
 } from 'react-native';
 import {addService} from '../../../services/firestore';
+import {launchImageLibrary} from 'react-native-image-picker';
+import {uploadImageAndGetDownloadURL} from '../../../services/storageService';
+import Icon from 'react-native-vector-icons/Ionicons';
 
 const AddServiceScreen = ({navigation}) => {
   const [name, setName] = useState('');
   const [price, setPrice] = useState('');
   const [description, setDescription] = useState('');
   const [loading, setLoading] = useState(false);
+  const [imageUri, setImageUri] = useState(null);
+  const [imagePath, setImagePath] = useState(null);
+
+  const handleChoosePhoto = () => {
+    launchImageLibrary({mediaType: 'photo'}, response => {
+      if (response.didCancel) {
+        console.log('User cancelled image picker');
+      } else if (response.errorCode) {
+        console.log('ImagePicker Error: ', response.errorMessage);
+        Alert.alert('Lỗi', 'Không thể chọn ảnh: ' + response.errorMessage);
+      } else if (response.assets && response.assets.length > 0) {
+        setImageUri(response.assets[0].uri);
+        setImagePath(response.assets[0].uri);
+      }
+    });
+  };
 
   const handleSaveService = async () => {
     if (!name.trim() || !price.trim()) {
@@ -29,11 +50,24 @@ const AddServiceScreen = ({navigation}) => {
     }
 
     setLoading(true);
+    let serviceImageUrl = null;
     try {
+      if (imagePath) {
+        const fileName = `service_${Date.now()}_${imagePath.substring(
+          imagePath.lastIndexOf('/') + 1,
+        )}`;
+        const storagePath = `services_images/${fileName}`;
+        serviceImageUrl = await uploadImageAndGetDownloadURL(
+          imagePath,
+          storagePath,
+        );
+      }
+
       await addService({
         name: name.trim(),
         price: priceValue,
         description: description.trim(),
+        imageUrl: serviceImageUrl,
       });
       Alert.alert('Thành công', 'Dịch vụ đã được thêm thành công!');
       navigation.goBack();
@@ -71,6 +105,18 @@ const AddServiceScreen = ({navigation}) => {
           multiline
           numberOfLines={4}
         />
+
+        <TouchableOpacity
+          style={styles.imagePickerButton}
+          onPress={handleChoosePhoto}>
+          <Icon name="image-outline" size={22} color="#007bff" />
+          <Text style={styles.imagePickerText}>Chọn ảnh cho dịch vụ</Text>
+        </TouchableOpacity>
+
+        {imageUri && (
+          <Image source={{uri: imageUri}} style={styles.previewImage} />
+        )}
+
         {loading ? (
           <ActivityIndicator
             size="large"
@@ -119,9 +165,30 @@ const styles = StyleSheet.create({
   },
   label: {
     fontSize: 16,
-    color: '#555',
+    color: '#495057',
     marginBottom: 5,
     fontWeight: '500',
+  },
+  imagePickerButton: {
+    flexDirection: 'row',
+    alignItems: 'center',
+    backgroundColor: '#e9ecef',
+    padding: 10,
+    borderRadius: 5,
+    marginBottom: 15,
+    justifyContent: 'center',
+  },
+  imagePickerText: {
+    marginLeft: 10,
+    fontSize: 16,
+    color: '#007bff',
+  },
+  previewImage: {
+    width: '100%',
+    height: 200,
+    borderRadius: 5,
+    marginBottom: 15,
+    resizeMode: 'cover',
   },
 });
 

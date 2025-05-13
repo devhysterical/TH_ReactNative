@@ -37,7 +37,7 @@ const CustomersListScreen = ({navigation}) => {
   );
 
   const onRefresh = useCallback(() => {
-    setRefreshing(true);
+    setRefreshing(false);
     fetchCustomers();
   }, []);
 
